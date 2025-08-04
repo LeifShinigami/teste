@@ -1,6 +1,6 @@
 {
-  "name": "App Teste",
-  "short_name": "AppTeste",
+  "name": "Peanut Brain",
+  "short_name": "Peanut Brain",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
