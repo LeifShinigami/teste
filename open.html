@@ -2,7 +2,7 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=375, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Instalar App</title>
     <link rel="manifest" href="manifest.json" />
     <style>
@@ -10,20 +10,34 @@
         margin: 0;
         padding: 0;
         background: black;
-        width: 375px;
-        height: 2000px;
+        height: 100%;
         font-family: sans-serif;
-        color: #444;
+      }
+
+      .wrapper {
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
       }
-      .container {
-        text-align: center;
+
+      .app-container {
+        width: 375px;
+        height: 2000px;
+        background: black;
+        color: #444;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        padding: 20px;
       }
+
+      h1, p {
+        margin: 10px 0;
+        text-align: center;
+      }
+
       #installBtn {
         padding: 10px 20px;
         font-size: 16px;
@@ -34,16 +48,23 @@
         margin-top: 20px;
         display: none;
       }
+
+      #pcHint {
+        display: none;
+        font-size: 14px;
+        margin-top: 30px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Instala esta cena</h1>
-      <p>Se quiseres que fique na tua tela inicial</p>
-      <button id="installBtn">Instalar App</button>
-      <p id="pcHint" style="display: none; font-size: 14px; margin-top: 30px;">
-        No PC, usa o ícone da barra de endereço para instalar ⬇️
-      </p>
+    <div class="wrapper">
+      <div class="app-container">
+        <h1>Instala esta cena</h1>
+        <p>Para adicionares à tela inicial</p>
+        <button id="installBtn">Instalar App</button>
+        <p id="pcHint">No PC, usa o ícone da barra de endereço para instalar ⬇️</p>
+      </div>
     </div>
 
     <script>
