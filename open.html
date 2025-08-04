@@ -46,11 +46,10 @@
         border: none;
         border-radius: 5px;
         margin-top: 20px;
-        display: none;
+        display: inline-block; /* 👈 agora visível sempre */
       }
 
       #pcHint {
-        display: none;
         font-size: 14px;
         margin-top: 30px;
         text-align: center;
@@ -72,14 +71,11 @@
       const installBtn = document.getElementById("installBtn");
       const pcHint = document.getElementById("pcHint");
 
-      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+      // Mesmo que não seja mobile, botão fica sempre visível
 
       window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        if (isMobile) {
-          installBtn.style.display = "inline-block";
-        }
       });
 
       installBtn.addEventListener("click", async () => {
@@ -87,15 +83,11 @@
           deferredPrompt.prompt();
           await deferredPrompt.userChoice;
           deferredPrompt = null;
-          installBtn.style.display = "none";
+        } else {
+          alert("A instalação automática não está disponível neste momento.");
         }
       });
 
-      if (!isMobile) {
-        pcHint.style.display = "block";
-      }
-
-      // 🔧 Caminho absoluto para garantir funcionamento
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/service-worker.js");
       }
