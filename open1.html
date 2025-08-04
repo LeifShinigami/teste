@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instalar App</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: white;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+    }
+    .container {
+      width: 375px;
+      height: 2000px;
+      background: #111;
+      border-radius: 20px;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    button {
+      background: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .info {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Instala esta cena</h1>
+    <p>Para adicionares à tela inicial</p>
+    <button id="installBtn" style="display: none;">Instalar App</button>
+    <div class="info">
+      No PC, usa o ícone da barra de endereço para instalar ↓
+    </div>
+  </div>
+
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+
+      installBtn.addEventListener('click', () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+        });
+      });
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(() => console.log('SW registado'))
+          .catch((err) => console.error('Erro no SW:', err));
+      });
+    }
+  </script>
+</body>
+</html>
