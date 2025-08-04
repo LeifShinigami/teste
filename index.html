@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/icon.png" />
+    <title>Peanutbrain</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: black;
+        color: white;
+        font-family: sans-serif;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #login {
+        text-align: center;
+        margin-top: 40vh;
+      }
+
+      input {
+        padding: 10px;
+        font-size: 16px;
+        background: #111;
+        border: 1px solid #444;
+        color: white;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: cyan;
+        border: none;
+        cursor: pointer;
+      }
+
+      #frame-wrapper {
+        display: none;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      #installButton {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 12px 20px;
+        background: cyan;
+        color: black;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        display: none;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login">
+      <p>Palavra-passe:</p>
+      <input type="password" id="pw" />
+      <br />
+      <button onclick="check()">Entrar</button>
+    </div>
+
+    <div id="frame-wrapper">
+      <iframe id="framer-frame" allow="autoplay; fullscreen" scrolling="yes"></iframe>
+    </div>
+
+    <button id="installButton">Instalar App</button>
+
+    <script>
+      const PASS = "xxx"; // muda aqui para a tua password real
+
+      function isInApp() {
+        return (
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true
+        );
+      }
+
+      function isInSocialWebview() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        return /\bwv\b|\bWebView\b/i.test(ua) || (
+          !window.matchMedia('(display-mode: standalone)').matches &&
+          !window.navigator.standalone &&
+          typeof window.opener === "undefined" &&
+          /Instagram|FBAV|FBAN|Messenger|Line|Snapchat|TikTok|Telegram|Pinterest/i.test(ua)
+        );
+      }
+
+      function check() {
+        const input = document.getElementById("pw").value;
+
+        if (input === PASS) {
+          let targetUrl = "";
+
+          if (isInSocialWebview()) {
+            targetUrl = "https://curly-path-662902.framer.app/start2";
+          } else if (isInApp()) {
+            targetUrl = "https://curly-path-662902.framer.app/capa";
+          } else {
+            targetUrl = "https://curly-path-662902.framer.app/assetspre";
+          }
+
+          document.getElementById("login").style.display = "none";
+          const iframe = document.getElementById("framer-frame");
+          iframe.src = targetUrl;
+          document.getElementById("frame-wrapper").style.display = "block";
+          window.scrollTo(0, 0);
+        } else {
+          alert("Errado. Vai dormir.");
+        }
+      }
+
+      // Instalação PWA
+      let deferredPrompt = null;
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        const btn = document.getElementById("installButton");
+        btn.style.display = "block";
+
+        btn.onclick = () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+              btn.style.display = "none";
+              deferredPrompt = null;
+            });
+          }
+        };
+      });
+
+      // Service Worker
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js")
+          .then(() => console.log("✅ Service Worker registado"))
+          .catch((err) => console.error("❌ Erro SW:", err));
+      }
+    </script>
+  </body>
+</html>
