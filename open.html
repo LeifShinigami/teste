@@ -46,7 +46,6 @@
         border: none;
         border-radius: 5px;
         margin-top: 20px;
-        display: inline-block; /* 👈 agora visível sempre */
       }
 
       #pcHint {
@@ -69,27 +68,31 @@
     <script>
       let deferredPrompt;
       const installBtn = document.getElementById("installBtn");
-      const pcHint = document.getElementById("pcHint");
 
-      // Mesmo que não seja mobile, botão fica sempre visível
-
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-      });
-
+      // Evento do botão
       installBtn.addEventListener("click", async () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
           await deferredPrompt.userChoice;
           deferredPrompt = null;
         } else {
-          alert("A instalação automática não está disponível neste momento.");
+          alert("Instalação não disponível neste momento. Tenta pelo ícone da barra ⬇️");
         }
       });
 
+      // Captura o beforeinstallprompt
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+
+      // Registo do service worker com caminho absoluto
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/service-worker.js");
+        navigator.serviceWorker.register("/service-worker.js")
+          .then(() => console.log("✅ SW registado"))
+          .catch(err => console.error("❌ Falha SW", err));
+      } else {
+        console.warn("❌ Service Worker não suportado");
       }
     </script>
   </body>
