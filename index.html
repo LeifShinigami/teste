@@ -2,55 +2,91 @@
 <html lang="pt">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=375, user-scalable=no" />
-    <title>App Teste</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instalar App</title>
     <link rel="manifest" href="manifest.json" />
     <style>
-      body {
+      html, body {
         margin: 0;
+        padding: 0;
         background: black;
-        width: 375px;
-        height: 100vh;
+        font-family: sans-serif;
+        width: 100%;
+        height: 100%;
+      }
+
+      .wrapper {
+        width: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
-        color: white;
-        font-family: sans-serif;
       }
-      button {
+
+      .app-container {
+        width: 375px;
+        min-height: 2000px;
+        background: black;
+        color: #444;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1, p {
+        margin: 10px 0;
+        text-align: center;
+      }
+
+      #installBtn {
         padding: 10px 20px;
         font-size: 16px;
         background: white;
         color: black;
         border: none;
         border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      #pcHint {
+        font-size: 14px;
+        margin-top: 30px;
+        text-align: center;
       }
     </style>
   </head>
   <body>
-    <button id="installBtn" style="display:none">Instalar App</button>
+    <div class="wrapper">
+      <div class="app-container">
+        <h1>Instala esta cena</h1>
+        <p>Para adicionares à tela inicial</p>
+        <button id="installBtn">Instalar App</button>
+        <p id="pcHint">No PC, usa o ícone da barra de endereço para instalar ⬇️</p>
+      </div>
+    </div>
 
     <script>
       let deferredPrompt;
       const installBtn = document.getElementById("installBtn");
 
-      window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.style.display = "block";
-      });
-
       installBtn.addEventListener("click", async () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
-          const choice = await deferredPrompt.userChoice;
+          await deferredPrompt.userChoice;
           deferredPrompt = null;
-          installBtn.style.display = "none";
+        } else {
+          alert("Instalação não disponível neste momento. Tenta pelo ícone da barra ⬇️");
         }
       });
 
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+      });
+
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js");
+        navigator.serviceWorker.register("/service-worker.js")
+          .then(() => console.log("✅ SW registado"))
+          .catch(err => console.error("❌ Falha SW", err));
       }
     </script>
   </body>
