@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=375, user-scalable=no" />
+    <title>Instalar App</title>
+    <link rel="manifest" href="manifest.json" />
+    <style>
+      body {
+        margin: 0;
+        background: black;
+        width: 375px;
+        height: 2000px;
+        color: #444;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .container {
+        text-align: center;
+        padding: 20px;
+      }
+      #installBtn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: white;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Instala esta cena</h1>
+      <p>Se quiseres que fique na tua tela inicial</p>
+      <button id="installBtn">Instalar App</button>
+      <p id="pcHint" style="display: none; font-size: 14px; margin-top: 30px;">
+        No PC, usa o ícone da barra de endereço para instalar ⬇️
+      </p>
+    </div>
+
+    <script>
+      let deferredPrompt;
+      const installBtn = document.getElementById("installBtn");
+      const pcHint = document.getElementById("pcHint");
+
+      // Detectar se é mobile
+      const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (isMobile) {
+          installBtn.style.display = "inline-block";
+        }
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          await deferredPrompt.userChoice;
+          deferredPrompt = null;
+          installBtn.style.display = "none";
+        }
+      });
+
+      if (!isMobile) {
+        pcHint.style.display = "block";
+      }
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+      }
+    </script>
+  </body>
+</html>
